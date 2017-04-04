@@ -3,115 +3,93 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Lesson1</title>
+    <title>Lesson1.1</title>
 </head>
 
 <body>
-    <input type="text"> // исходное текстовое поле ввода
+    <input type="text">
 
     <script>
-        // Класс для комбинации с чекбоксом, для демонстрации возвращаемого значения поля ввода, оно выводится в блок div.
+        // Класс для комбинации с чекбоксом, значение текcтового поля ввода возвращается фунцией getInputValue()
         function InputPlusCheckbox(element) {
-            this.element = element;
             var _this = this;
-            this._chb = document.createElement('input');
-            this._chb.type = "checkbox";
-            this._chb.checked = false;
-            document.body.appendChild(this._chb);
-            this._div = document.createElement('div');
-            document.body.appendChild(this._div);
-            this.inputUnchecked();
-            this._chb.onclick = function () {
-                if (_this._chb.checked) {
-                    _this.inputChecked();
-
-
-                } else {
-                     _this.inputUnchecked();
-
-                }
+            this.element = element;
+            this.addElement();
+            this.ifChecked();
+            this.addedElement.onclick = function () {
+                _this.ifChecked();
             }
-            element.onchange = function () {
-                if (_this._chb.checked) _this._div.innerText = element.value;
-                else div.innerText = null;
-            }
-            element.onkeypress = function () {
-                if (_this._chb.checked) _this._div.innerText = element.value;
-                else div.innerText = null;
-            }
-
         }
 
-        InputPlusCheckbox.prototype.inputChecked = function () {
-            this.element.readOnly = false;
-            this.element.style.border = "1px solid black";
-            this.element.placeholder = "Вводите текст";
-            this.element.style.color = "black";
-            this._div.innerText = this.element.value;
+        InputPlusCheckbox.prototype.getInputValue = function () {
+            var input = document.querySelector('input');
+            if (this.addedElement.checked) return input.value;
+            return null;
         }
 
-        InputPlusCheckbox.prototype.inputUnchecked = function () {
-                this.element.readOnly = true;
-                this.element.style.border = "1px solid #dadada";
-                this.element.placeholder = "Кликните галочку";
-                this.element.style.color = "#dadada";
-                this.element.value = this._div.innerText = null;
+        InputPlusCheckbox.prototype.addElement = function () {
+            this.addedElement = document.createElement('input');
+            this.addedElement.type = "checkbox";
+            this.addedElement.checked = false;
+            this.element.parentNode.appendChild(this.addedElement);
+        }
+
+        InputPlusCheckbox.prototype.ifChecked = function () {
+            if (this.addedElement.checked) {
+                this.element.disabled = false;
+
+            } else {
+                this.element.disabled = true;
             }
-            //var inp = new InputPlusCheckbox(document.querySelector('input'));
+        }
+
+        InputPlusCheckbox.prototype.addedElement = this.addedElement;
+
+        var x = new InputPlusCheckbox(document.querySelector('input'));
+        //console.log(x.getInputValue());
+
         // Класс для комбинации радио кнопок с полем ввода, наследующий от предыдущего. 
         function InputPlusRadio(element) {
             this.element = element;
             var _this = this;
+            this.addElement();
+            this.ifChecked();
+            this.addedElement.onchange = function () {
+                _this.ifChecked();                
+            }
+            this.radio["yes"].onchange = function () {
+                _this.ifChecked();                
+            }
+            this.radio["no"].onchange = function () {
+                _this.ifChecked();                
+            }
+        }
+
+        InputPlusRadio.prototype = Object.create(InputPlusCheckbox.prototype);
+
+        InputPlusRadio.prototype.addElement = function () {
             var captions = {
                 yes: "Да",
                 no: "Нет",
                 own: "Свой вариант"
             };
-            this._rad = [];
+            this.radio = [];
             for (var key in captions) {
-                this._rad[key] = document.createElement('input');
-                this._rad[key].type = "radio";
-                this._rad[key].checked = false;
-                this._rad[key].value = key;
-                this._rad[key].name = "caps";
-                document.body.appendChild(this._rad[key]);
+                this.radio[key] = document.createElement('input');
+                this.radio[key].type = "radio";
+                this.radio[key].checked = false;
+                this.radio[key].value = key;
+                this.radio[key].name = "caps";
+                this.element.parentNode.appendChild(this.radio[key]);
                 var lab = document.createElement('label');
                 lab.innerText = captions[key];
-                document.body.appendChild(lab);
+                this.radio[key].parentNode.appendChild(lab);
 
             }
-            this._div = document.createElement('div');
-            document.body.appendChild(this._div);
-            this.inputUnchecked();
-            for (var key in captions) {
-                _this._rad[key].onclick = function () {
-
-                    if (_this._rad[key].checked) {
-                        _this.inputChecked();
-
-
-
-                    } else {
-                        _this.inputUnchecked();
-
-                    }
-                }
-            }
-            element.onchange = function () {
-                if (_this._rad["own"].checked) _this._div.innerText = element.value;
-                else _this._div.innerText = null;
-            }
-            element.onkeypress = function () {
-                if (_this._rad["own"].checked) _this._div.innerText = element.value;
-                else _this._div.innerText = null;
-            }
-
+            this.addedElement = this.radio[key];
         }
-        
-       InputPlusRadio.prototype = Object.create(InputPlusCheckbox.prototype); 
-        
-        var inp = new InputPlusRadio(document.querySelector('input'));
-        
+
+        var y = new InputPlusRadio(document.querySelector('input'));
     </script>
 </body>
 
